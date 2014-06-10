@@ -95,6 +95,12 @@ object Main {
     }
 
     def sum[M[A], A](xs: M[A])(fl: FoldLeft[M])(implicit m: Monoid[A]) = fl.foldLeft(xs)(m.mzero) { (a, b) => m.mappend(a, b) }
+    
+    def sum1[M[A]: FoldLeft, A:Monoid](xs: M[A]) = { 
+      val fl = implicitly[FoldLeft[M]]
+      val m = implicitly[Monoid[A]]
+      fl.foldLeft(xs)(m.mzero) { (a, b) => m.mappend(a, b) }			 
+    }
   }
 
 }
