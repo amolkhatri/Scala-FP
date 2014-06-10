@@ -64,11 +64,11 @@ object Main {
 
     implicit val listFoldLeft = new  FoldLeft[List] {
       def foldLeft[A, B](xs: List[B])(a: A)(f: (A, B) => A): A = xs.foldLeft(a)(f)
-    }
+   }
 
-    implicit val ArrayFoldLeft = new  FoldLeft[Array] {
-      def foldLeft[A, B](xs: Array[B])(a: A)(f: (A, B) => A): A = xs.foldLeft(a)(f)
-    }
+   implicit val ArrayFoldLeft = new  FoldLeft[Array] {
+     def foldLeft[A, B](xs: Array[B])(a: A)(f: (A, B) => A): A = xs.foldLeft(a)(f)
+   }
 
     println(s"Step2 List Int: ${Step2.sum(intList)}") //sum7
     println(s"Step2 List RationalNumber: ${Step2.sum(rnList)}") //sum7
@@ -81,11 +81,6 @@ object Main {
     trait Monoid[A] {
       def mappend(a: A, b: A): A
       def mzero: A
-    }
-
-    def sum1[A: Monoid](xs:List[A]) = { 
-      val m = implicitly[Monoid[A]]
-      xs.foldLeft(m.mzero) { (a, b) => m.mappend(a, b) }
     }
 
     //def sum[A](xs: List[A])(implicit m: Monoid[A]) = xs.foldLeft(m.mzero) { (a, b) => m.mappend(a, b) }
