@@ -74,6 +74,15 @@ object Main {
     println(s"Step2 List RationalNumber: ${Step2.sum(rnList)}") //sum7
     println(s"Step2 Array RationalNumber: ${Step2.sum(intArray)}") //sum7
     println(s"Step2 Array RationalNumber: ${Step2.sum(rnArray)}") //sum7
+
+
+    // Method injection
+    println(s"Method injection List Int: ${MethodInjection.sum(intList)}") //sum7
+    println(s"Method Injection List RationalNumber: ${MethodInjection.sum(rnList)}") //sum7
+    println(s"Method Injection Array RationalNumber: ${MethodInjection.sum(intArray)}") //sum7
+    println(s"Method Injection Array RationalNumber: ${MethodInjection.sum(rnArray)}") //sum7
+
+    
   }
 
   object Step1 {
@@ -129,6 +138,45 @@ object Main {
       val m = implicitly[Monoid[A]]
       fl.foldLeft(xs)(m.mzero) { (a, b) => m.mappend(a, b) }			 
     }
+  }
+
+
+  // Method injection using implicit classes
+
+  object MethodInjection{ 
+    implicit class MonoidOpts[A:Monoid](value:A){ 
+      val F = implicitly[Monoid[A]]
+      def |+|(b:A) = F.mappend(value,b)
+    }
+
+    def sum[M[A]:FoldLeft, A:Monoid](xs:M[A]) = { 
+       val fl = implicitly[FoldLeft[M]]
+       val m = implicitly[Monoid[A]]
+       fl.foldLeft(xs)(m.mzero){ (a,b) => a |+| b }
+    }
+  }
+
+
+  // Method injection using implicit def
+
+  object MethodInjecttioDef{ 
+    trait MonoidOpts[A]{ 
+      val F:Monoid[A]
+      val value:A
+      def |+|(b:A) = F.mappend(value, b)
+    }
+
+    implicit def toMonoidOpts[A: Monoid](a:A) = new MonoidOpts[A]{ 
+      val F = implicitly[Monoid[A]]
+      val value = a
+    }
+
+    def sum[M[A]: FoldLeft, A: Monoid](xs:M[A]) = { 
+      val fl = implicitly[FoldLeft[M]]
+      val m = implicitly[Monoid[A]]
+      fl.foldLeft(xs)(m.mzero){ (a,b) => m.mappend(a,b)}
+    }
+
   }
 
 }
